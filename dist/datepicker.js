@@ -65,6 +65,18 @@
         return element;
     }
 
+    function hasClass(ele, classStr) {
+        var className = ele.className;
+        if (!className) {
+            return false;
+        }
+        var classArr = className.replace(/\s{1,}$/, '').replace(/\s{1,}/g, '|').split('|');
+        return classArr.indexOf(classStr) > -1;
+    }
+
+    var containerId = "rd-picker-container";
+    var containerClass = "rd-picker-container";
+
     var hasInstance = false;
     var container = null;
 
@@ -78,7 +90,7 @@
             _classCallCheck(this, RDPikcer);
 
             if (!opts.ele) {
-                throw new Error('You must provide a dom element!');
+                throw new Error('You must provide a DOM element!');
                 return;
             }
             this.opts = Object.assign({}, DEFAULTS, opts);
@@ -94,8 +106,8 @@
 
                 if (!hasInstance) {
                     var pickerContainer = createElement('div', {
-                        id: "rd-picker-container",
-                        class: "rd-picker-container",
+                        id: containerId,
+                        class: containerClass,
                         style: "height: 300px; background: red;",
                         events: {
                             click: function click() {

@@ -22,6 +22,18 @@ function createElement(tag, attrs, children) {
     return element;
 }
 
+function hasClass(ele, classStr) {
+    let className = ele.className;
+    if(!className) {
+        return false;
+    }
+    let classArr = className.replace(/\s{1,}$/, '').replace(/\s{1,}/g, '|').split('|');
+    return classArr.indexOf(classStr) > -1;
+}
+
+const containerId = "rd-picker-container";
+const containerClass = "rd-picker-container";
+
 let hasInstance = false;
 let container = null;
 
@@ -33,7 +45,7 @@ const DEFAULTS = {
 class RDPikcer {
     constructor(opts) {
         if(!opts.ele) {
-            throw new Error('You must provide a dom element!')
+            throw new Error('You must provide a DOM element!')
             return;
         }
         this.opts = Object.assign({}, DEFAULTS, opts);
@@ -46,8 +58,8 @@ class RDPikcer {
             const pickerContainer = createElement(
                 'div',
                 {
-                    id: "rd-picker-container",
-                    class: "rd-picker-container",
+                    id: containerId,
+                    class: containerClass,
                     style: "height: 300px; background: red;",
                     events: {
                         click: () => {
