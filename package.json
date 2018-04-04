@@ -1,0 +1,18 @@
+{
+  "name": "r-date-picker",
+  "version": "1.0.0",
+  "description": "A date picker",
+  "scripts": {
+    "build": "babel ./src/datepicker.js --out-file ./dist/datepicker.js --watch"
+  },
+  "main": "index.js",
+  "repository": "https://github.com/r-doctor/r-date-picker.git",
+  "author": "sirjiangbo <sirjiangbo@hotmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-plugin-transform-es2015-modules-umd": "^6.24.1",
+    "babel-preset-env": "^1.6.1"
+  }
+}
