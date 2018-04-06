@@ -41,8 +41,8 @@
         };
     }();
 
-    function getElementRect(ele) {
-        return ele.getBoundingClientRect();
+    function addListener(ele, type, fn) {
+        ele.addEventListener(type, fn);
     }
 
     function createElement(tag, attrs, children) {
@@ -52,7 +52,7 @@
                 element.setAttribute(key, attrs[key]);
             } else {
                 for (var _key in attrs[key]) {
-                    element.addEventListener(_key, attrs[key][_key]);
+                    addListener(element, _key, attrs[key][_key]);
                 }
             }
         }
@@ -65,13 +65,48 @@
         return element;
     }
 
+    function makeClassArr(className) {
+        if (!className) {
+            return [];
+        }
+        return className.replace(/\s{1,}$/, '').replace(/\s{1,}/g, '|').split('|');
+    }
+
     function hasClass(ele, classStr) {
         var className = ele.className;
         if (!className) {
             return false;
         }
-        var classArr = className.replace(/\s{1,}$/, '').replace(/\s{1,}/g, '|').split('|');
-        return classArr.indexOf(classStr) > -1;
+        return makeClassArr(className).indexOf(classStr) > -1;
+    }
+
+    function addClass(ele, classStr) {
+        var originClass = ele.className ? ele.className.replace(/\s{1,}$/, '') : '';
+        ele.className = originClass + ' ' + classStr;
+    }
+
+    function removeClass(ele, classStr) {}
+
+    function getElementAttribute(ele, attr) {
+        return ele.getAttribute(attr);
+    }
+
+    function getElementRect(ele) {
+        return ele.getBoundingClientRect();
+    }
+
+    function setPickerPosition(ele) {
+        var rect = getElementRect(ele);
+        ele.style.top = rect.top + 'px';
+        ele.style.left = rect.left + 'px';
+    }
+
+    function showPicker(container) {
+        container.style.display = 'block';
+    }
+
+    function hidePicker(container) {
+        container.style.display = 'none';
     }
 
     var containerId = "rd-picker-container";
@@ -108,19 +143,28 @@
                     var pickerContainer = createElement('div', {
                         id: containerId,
                         class: containerClass,
-                        style: "height: 300px; background: red;",
+                        style: "position: fixed; width: 400px; height: 300px; background: red; display: none;",
                         events: {
                             click: function click() {
                                 alert('click ok!!');
                             }
                         }
-                    }, ['hello']);
+                    });
                     document.body.appendChild(pickerContainer);
                     container = pickerContainer;
                 }
-                this.ele.addEventListener('focus', function () {
-                    console.log(_this.opts);
-                    console.log(getElementRect(_this.ele));
+
+                addListener(this.ele, 'focus', function () {
+                    if (_this.opts.target === 'web') {
+                        setPickerPosition(_this.ele);
+                        showPicker(container);
+                    }
+                });
+
+                addListener(document, 'click', function (event) {
+                    if (event.target !== _this.ele && event.target !== container) {
+                        hidePicker(container);
+                    }
                 });
             }
         }, {

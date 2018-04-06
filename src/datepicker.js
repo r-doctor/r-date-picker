@@ -1,5 +1,5 @@
-function getElementRect(ele) {
-    return ele.getBoundingClientRect();
+function addListener(ele, type, fn) {
+    ele.addEventListener(type, fn);
 }
 
 function createElement(tag, attrs, children) {
@@ -9,7 +9,7 @@ function createElement(tag, attrs, children) {
             element.setAttribute(key, attrs[key]);
         } else {
             for(let _key in attrs[key]) {
-                element.addEventListener(_key, attrs[key][_key]);
+                addListener(element, _key, attrs[key][_key]);
             }
         }
     }
@@ -22,13 +22,50 @@ function createElement(tag, attrs, children) {
     return element;
 }
 
+function makeClassArr(className) {
+    if(!className) {
+        return [];
+    }
+    return className.replace(/\s{1,}$/, '').replace(/\s{1,}/g, '|').split('|');
+}
+
 function hasClass(ele, classStr) {
     let className = ele.className;
     if(!className) {
         return false;
     }
-    let classArr = className.replace(/\s{1,}$/, '').replace(/\s{1,}/g, '|').split('|');
-    return classArr.indexOf(classStr) > -1;
+    return makeClassArr(className).indexOf(classStr) > -1;
+}
+
+function addClass(ele, classStr) {
+    let originClass = ele.className ? ele.className.replace(/\s{1,}$/, '') : '';
+    ele.className = originClass + ' ' + classStr;
+}
+
+function removeClass(ele, classStr) {
+
+}
+
+function getElementAttribute(ele, attr) {
+    return ele.getAttribute(attr);
+}
+
+function getElementRect(ele) {
+    return ele.getBoundingClientRect();
+}
+
+function setPickerPosition(ele) {
+    let rect = getElementRect(ele);
+    ele.style.top = rect.top + 'px';
+    ele.style.left = rect.left + 'px';
+}
+
+function showPicker(container) {
+    container.style.display = 'block';
+}
+
+function hidePicker(container) {
+    container.style.display = 'none';
 }
 
 const containerId = "rd-picker-container";
@@ -60,23 +97,29 @@ class RDPikcer {
                 {
                     id: containerId,
                     class: containerClass,
-                    style: "height: 300px; background: red;",
+                    style: "position: fixed; width: 400px; height: 300px; background: red; display: none;",
                     events: {
                         click: () => {
                             alert('click ok!!');
                         }
                     }
-                },
-                [
-                    'hello'
-                ]
+                }
             );
             document.body.appendChild(pickerContainer);
             container = pickerContainer;
         }
-        this.ele.addEventListener('focus', () => {
-            console.log(this.opts);
-            console.log(getElementRect(this.ele));
+
+        addListener(this.ele, 'focus', () => {
+            if(this.opts.target === 'web') {
+                setPickerPosition(this.ele);
+                showPicker(container);
+            }
+        });
+
+        addListener(document, 'click', (event) => {
+            if(event.target !== this.ele && event.target !== container) {
+                hidePicker(container);
+            }
         });
     }
     destory() {
