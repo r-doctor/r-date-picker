@@ -95,19 +95,31 @@
         return ele.getBoundingClientRect();
     }
 
-    function setPickerPosition(ele) {
-        var rect = getElementRect(ele);
-        ele.style.top = rect.top + 'px';
-        ele.style.left = rect.left + 'px';
-    }
-
-    function showPicker(container) {
-        container.style.display = 'block';
-    }
-
-    function hidePicker(container) {
-        container.style.display = 'none';
-    }
+    var pickerUtil = {
+        initPicker: function initPicker(container) {
+            console.log(container);
+            container.appendChild(this.createPickerHeader());
+        },
+        createPickerHeader: function createPickerHeader() {
+            return createElement('div', {
+                class: 'rd-picker-header'
+            }, ['header']);
+        },
+        setPickerPosition: function setPickerPosition(ele, container) {
+            var rect = getElementRect(ele);
+            container.style.top = rect.top + rect.height + 'px';
+            container.style.left = rect.left + 'px';
+        },
+        showPicker: function showPicker(container) {
+            container.style.display = 'block';
+        },
+        hidePicker: function hidePicker(container) {
+            container.style.display = 'none';
+        },
+        destoryPicker: function destoryPicker(container) {
+            container && container.remove();
+        }
+    };
 
     var containerId = "rd-picker-container";
     var containerClass = "rd-picker-container";
@@ -143,7 +155,6 @@
                     var pickerContainer = createElement('div', {
                         id: containerId,
                         class: containerClass,
-                        style: "position: fixed; width: 400px; height: 300px; background: red; display: none;",
                         events: {
                             click: function click() {
                                 alert('click ok!!');
@@ -156,22 +167,22 @@
 
                 addListener(this.ele, 'focus', function () {
                     if (_this.opts.target === 'web') {
-                        setPickerPosition(_this.ele);
-                        showPicker(container);
+                        pickerUtil.setPickerPosition(_this.ele, container);
+                        pickerUtil.initPicker(container);
+                        pickerUtil.showPicker(container);
                     }
                 });
 
                 addListener(document, 'click', function (event) {
                     if (event.target !== _this.ele && event.target !== container) {
-                        hidePicker(container);
+                        pickerUtil.hidePicker(container);
                     }
                 });
             }
         }, {
             key: 'destory',
             value: function destory() {
-                console.log('destory');
-                // container && container.remove();
+                pickerUtil.destoryPicker(container);
             }
         }]);
 

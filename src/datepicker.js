@@ -54,19 +54,37 @@ function getElementRect(ele) {
     return ele.getBoundingClientRect();
 }
 
-function setPickerPosition(ele) {
-    let rect = getElementRect(ele);
-    ele.style.top = rect.top + 'px';
-    ele.style.left = rect.left + 'px';
-}
-
-function showPicker(container) {
-    container.style.display = 'block';
-}
-
-function hidePicker(container) {
-    container.style.display = 'none';
-}
+const pickerUtil = {
+    initPicker: function (container) {
+        console.log(container);
+        container.appendChild(this.createPickerHeader());
+    },
+    createPickerHeader: function() {
+        return createElement(
+            'div',
+            {
+                class: 'rd-picker-header'
+            },
+            [
+                'header'
+            ]
+        );
+    },
+    setPickerPosition: function (ele, container) {
+        let rect = getElementRect(ele);
+        container.style.top = (rect.top + rect.height) + 'px';
+        container.style.left = rect.left + 'px';
+    },
+    showPicker: function (container) {
+        container.style.display = 'block';
+    },
+    hidePicker: function (container) {
+        container.style.display = 'none';
+    },
+    destoryPicker: function(container) {
+        container && container.remove();
+    }
+};
 
 const containerId = "rd-picker-container";
 const containerClass = "rd-picker-container";
@@ -97,7 +115,6 @@ class RDPikcer {
                 {
                     id: containerId,
                     class: containerClass,
-                    style: "position: fixed; width: 400px; height: 300px; background: red; display: none;",
                     events: {
                         click: () => {
                             alert('click ok!!');
@@ -111,20 +128,20 @@ class RDPikcer {
 
         addListener(this.ele, 'focus', () => {
             if(this.opts.target === 'web') {
-                setPickerPosition(this.ele);
-                showPicker(container);
+                pickerUtil.setPickerPosition(this.ele, container);
+                pickerUtil.initPicker(container);
+                pickerUtil.showPicker(container);
             }
         });
 
         addListener(document, 'click', (event) => {
             if(event.target !== this.ele && event.target !== container) {
-                hidePicker(container);
+                pickerUtil.hidePicker(container);
             }
         });
     }
     destory() {
-        console.log('destory');
-        // container && container.remove();
+        pickerUtil.destoryPicker(container);
     }
 }
 
