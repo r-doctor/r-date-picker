@@ -56,8 +56,10 @@ function getElementRect(ele) {
 
 const pickerUtil = {
     initPicker: function (container) {
-        console.log(container);
-        container.appendChild(this.createPickerHeader());
+        if(!initFlag) {
+            container.appendChild(this.createPickerHeader());
+            initFlag = true;
+        }
     },
     createPickerHeader: function() {
         return createElement(
@@ -90,7 +92,9 @@ const containerId = "rd-picker-container";
 const containerClass = "rd-picker-container";
 
 let hasInstance = false;
+let initFlag = false;
 let container = null;
+let instances = [];
 
 const DEFAULTS = {
     type: 'date',
@@ -106,6 +110,7 @@ class RDPikcer {
         this.opts = Object.assign({}, DEFAULTS, opts);
         this.ele = this.opts.ele;
         this.init();
+        instances.push(this.ele);
         !hasInstance && (hasInstance = true);
     }
     init() {
@@ -133,16 +138,16 @@ class RDPikcer {
                 pickerUtil.showPicker(container);
             }
         });
-
-        addListener(document, 'click', (event) => {
-            if(event.target !== this.ele && event.target !== container) {
-                pickerUtil.hidePicker(container);
-            }
-        });
     }
     destory() {
         pickerUtil.destoryPicker(container);
     }
 }
+
+addListener(document, 'click', (event) => {
+    if(instances.indexOf(event.target) == -1 && event.target !== container) {
+        pickerUtil.hidePicker(container);
+    }
+});
 
 export default RDPikcer;

@@ -97,8 +97,10 @@
 
     var pickerUtil = {
         initPicker: function initPicker(container) {
-            console.log(container);
-            container.appendChild(this.createPickerHeader());
+            if (!initFlag) {
+                container.appendChild(this.createPickerHeader());
+                initFlag = true;
+            }
         },
         createPickerHeader: function createPickerHeader() {
             return createElement('div', {
@@ -125,7 +127,9 @@
     var containerClass = "rd-picker-container";
 
     var hasInstance = false;
+    var initFlag = false;
     var container = null;
+    var instances = [];
 
     var DEFAULTS = {
         type: 'date',
@@ -143,6 +147,7 @@
             this.opts = Object.assign({}, DEFAULTS, opts);
             this.ele = this.opts.ele;
             this.init();
+            instances.push(this.ele);
             !hasInstance && (hasInstance = true);
         }
 
@@ -172,12 +177,6 @@
                         pickerUtil.showPicker(container);
                     }
                 });
-
-                addListener(document, 'click', function (event) {
-                    if (event.target !== _this.ele && event.target !== container) {
-                        pickerUtil.hidePicker(container);
-                    }
-                });
             }
         }, {
             key: 'destory',
@@ -188,6 +187,12 @@
 
         return RDPikcer;
     }();
+
+    addListener(document, 'click', function (event) {
+        if (instances.indexOf(event.target) == -1 && event.target !== container) {
+            pickerUtil.hidePicker(container);
+        }
+    });
 
     exports.default = RDPikcer;
 });
