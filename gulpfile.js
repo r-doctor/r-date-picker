@@ -11,7 +11,7 @@ const rename = require('gulp-rename');
 
 gulp.task('js', () => {
     return watch('./src/**/*.js', () => {
-        gulp.src('./src/datepicker.js')
+        gulp.src('./src/rdatepicker.js')
             .pipe(babel())
             .pipe(gulp.dest('./dist'))
     })
@@ -19,7 +19,7 @@ gulp.task('js', () => {
 
 gulp.task('css', () => {
     return watch('./src/less/**/*.less', () => {
-        gulp.src('./src/less/datepicker.less')
+        gulp.src('./src/less/rdatepicker.less')
             .pipe(less())
             .pipe(postcss([autoprefixer()]))
             .pipe(gulp.dest('./dist'))
@@ -27,14 +27,14 @@ gulp.task('css', () => {
 });
 
 gulp.task('uglify', () => {
-    gulp.src('./dist/datepicker.js')
+    gulp.src('./dist/rdatepicker.js')
         .pipe(uglify())
         .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest('./dist/compress'));
 });
 
 gulp.task('cssmini', () => {
-    gulp.src('./dist/datepicker.css')
+    gulp.src('./dist/rdatepicker.css')
         .pipe(cssClean())
         .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest('./dist/compress'));
